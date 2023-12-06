@@ -1,7 +1,8 @@
 "use client";
 
 import * as React from 'react';
-import { GoogleTagManager as NextGoogleTagManager } from '@next/third-parties/google';
+import { GoogleTagManager as NextGoogleTagManager, sendGTMEvent } from '@next/third-parties/google';
+import { usePathname } from 'next/navigation';
 
 export interface GoogleTagManagerProps {
   containerId?: string;
@@ -37,5 +38,27 @@ export function GoogleTagManager({ containerId, userId }: GoogleTagManagerProps)
 
   if (!containerId) return null;
 
-  return <NextGoogleTagManager gtmId={containerId} />;
+  return (<><PathnameChangeHandler /><NextGoogleTagManager gtmId={containerId} /></>);
+}
+
+
+function PathnameChangeHandler() {
+  const pathname = usePathname();
+
+  const pathnameRef = React.useRef<string>();
+
+  React.useEffect(() => {
+    if (pathnameRef.current === pathname) return;
+
+    sendGTMEvent({
+      event: 'page_view',
+      page: pathname,
+      page_location: window.location.href,
+    });
+
+    pathnameRef.current = pathname;
+  }, [pathname]);
+
+  return null;
+
 }
