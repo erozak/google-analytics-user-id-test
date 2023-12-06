@@ -52,7 +52,7 @@ function PathnameChangeHandler() {
 
     sendGTMEvent({
       event: 'page_view',
-      page: pathname,
+      page_path: pathname,
       page_location: window.location.href,
     });
 
